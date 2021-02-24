@@ -1,12 +1,99 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import "./Quizes.css";
+import { Container, Form, Col, Row, Button } from "react-bootstrap";
+import axios from "axios";
 
 const Quizes = () => {
-    return (
-        <div>
-            <h1>Quiz 1</h1>
-            <h1>Quiz 2</h1>
-        </div>
-    )
-}
+    const [sliderValue, setSliderValue] = useState(10);
+    const [categoryData, setCategoryData] = useState();
+    const [selectedCategory, setSelectedCategory] = useState("Any");
+    const [selectedDifficulty, setSelectedDifficulty] = useState("Any");
+    const [selectedType, setSelectedType] = useState("Any");
 
-export default Quizes
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await axios("https://opentdb.com/api_category.php");
+            setCategoryData(result.data.trivia_categories);
+        };
+
+        fetchData();
+    }, []);
+    const mapCategory = (category) => {
+        if (category != undefined) {
+            return category.map((item) => (
+                <option key={item.id}>{item.name}</option>
+            ));
+        }
+    };
+
+    return (
+        <Container>
+            <h1>Start a Quiz</h1>
+            <Form>
+                <Form.Group controlId="exampleForm.ControlSelect1">
+                    <Form.Label>Category</Form.Label>
+                    <Form.Control
+                        as="select"
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        value={selectedCategory}
+                    >
+                        <option key="any">Any</option>
+                        {mapCategory(categoryData)}
+                    </Form.Control>
+                </Form.Group>
+                <Form.Group controlId="exampleForm.ControlSelect2">
+                    <Form.Label>Difficulty</Form.Label>
+                    <Form.Control as="select" onChange={(e) => setSelectedDifficulty(e.target.value)} value={selectedDifficulty}>
+                        <option>Any</option>
+                        <option>Easy</option>
+                        <option>Medium</option>
+                        <option>Hard</option>
+                    </Form.Control>
+                </Form.Group>
+                <Form.Group controlId="exampleForm.ControlSelect3">
+                    <Form.Label>Type</Form.Label>
+                    <Form.Control as="select" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+                        <option>Any</option>
+                        <option>Multiple Choice</option>
+                        <option>True / False</option>
+                    </Form.Control>
+                </Form.Group>
+                <Form.Group controlId="formBasicRangeCustom">
+                    <Form.Label>Number of Questions</Form.Label>
+                    <Row className="justify-content-md-center">
+                        <Col>
+                            <Form.Control
+                                value={sliderValue}
+                                min={1}
+                                max={50}
+                                onChange={(changeEvent) =>
+                                    setSliderValue(changeEvent.target.value)
+                                }
+                                type="range"
+                                custom
+                            />
+                        </Col>
+                        <Col lg="1">
+                            <Form.Control
+                                className="slider-number-output"
+                                value={sliderValue}
+                                readOnly
+                            />
+                        </Col>
+                    </Row>
+                </Form.Group>
+                <Row className="justify-content-md-center">
+                    <Col md="auto">
+                        <div className="mb-2">
+                            <Button variant="primary" size="lg">
+                                Start Quiz
+                            </Button>
+                        </div>
+                    </Col>
+                </Row>
+            </Form>
+        </Container>
+    );
+};
+
+export default Quizes;
