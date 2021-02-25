@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Quizes.css";
 import { Container, Form, Col, Row, Button } from "react-bootstrap";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Quizes = () => {
     const [sliderValue, setSliderValue] = useState(10);
@@ -18,11 +19,36 @@ const Quizes = () => {
 
         fetchData();
     }, []);
+
     const mapCategory = (category) => {
         if (category != undefined) {
             return category.map((item) => (
                 <option key={item.id}>{item.name}</option>
             ));
+        }
+    };
+
+    const getCategoryID = () => {
+        if (categoryData != undefined) {
+            let searchedID;
+            for (var i = 0; i < categoryData.length; i++) {
+                if (categoryData[i].name === selectedCategory) {
+                    searchedID = categoryData[i].id;
+                }
+            }
+            if (searchedID != undefined) {
+                return searchedID;
+            } else {
+                return "any";
+            }
+        }
+    };
+
+    const getType = () => {
+        if (selectedType == "True / False") {
+            return "boolean";
+        } else {
+            return selectedType;
         }
     };
 
@@ -43,7 +69,11 @@ const Quizes = () => {
                 </Form.Group>
                 <Form.Group controlId="exampleForm.ControlSelect2">
                     <Form.Label>Difficulty</Form.Label>
-                    <Form.Control as="select" onChange={(e) => setSelectedDifficulty(e.target.value)} value={selectedDifficulty}>
+                    <Form.Control
+                        as="select"
+                        onChange={(e) => setSelectedDifficulty(e.target.value)}
+                        value={selectedDifficulty}
+                    >
                         <option>Any</option>
                         <option>Easy</option>
                         <option>Medium</option>
@@ -52,7 +82,11 @@ const Quizes = () => {
                 </Form.Group>
                 <Form.Group controlId="exampleForm.ControlSelect3">
                     <Form.Label>Type</Form.Label>
-                    <Form.Control as="select" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
+                    <Form.Control
+                        as="select"
+                        value={selectedType}
+                        onChange={(e) => setSelectedType(e.target.value)}
+                    >
                         <option>Any</option>
                         <option>Multiple Choice</option>
                         <option>True / False</option>
@@ -85,9 +119,13 @@ const Quizes = () => {
                 <Row className="justify-content-md-center">
                     <Col md="auto">
                         <div className="mb-2">
-                            <Button variant="primary" size="lg">
-                                Start Quiz
-                            </Button>
+                            <Link
+                                to={`/q/${getCategoryID()}/${selectedDifficulty}/${getType()}/${sliderValue}`}
+                            >
+                                <Button variant="primary" size="lg">
+                                    Start Quiz
+                                </Button>
+                            </Link>
                         </div>
                     </Col>
                 </Row>
