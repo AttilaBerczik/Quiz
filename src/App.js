@@ -1,5 +1,4 @@
 import "./App.css";
-import { Container, Row, Col } from "react-bootstrap";
 import NavBar from "./Components/Navbar/Navbar";
 import Home from "./Components/Home/Home";
 import Quizes from "./Components/Quizes/Quizes";
