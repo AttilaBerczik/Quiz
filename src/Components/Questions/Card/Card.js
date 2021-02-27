@@ -9,7 +9,6 @@ const Cards = (props) => {
         props.buttonVariants[props.id][4],
         props.buttonVariants[props.id][6],
     ];
-    console.log(newArrayOfQuestions);
     const styles = [
         props.buttonVariants[props.id][1],
         props.buttonVariants[props.id][3],
@@ -23,27 +22,36 @@ const Cards = (props) => {
     const buttonClicked = (clicked) => {
         //gets activated when the user clicks on a solution
         //sets the color of the button to red or green, to show the solution
-        let style = [...props.buttonVariants];
-        let styles2 = styles;
-        for (let i = 0; i < newArrayOfQuestions.length; i++) {
-            if (newArrayOfQuestions[i] == question.correct_answer) {
-                styles2[i] = "success";
-            } else {
-                styles2[i] = "danger";
+        //the color is different if the player found the correct answer
+        if (styles[0] == "outline-secondary") {
+            let style = [...props.buttonVariants];
+            let styles2 = styles;
+            for (let i = 0; i < newArrayOfQuestions.length; i++) {
+                if (clicked == atob(question.correct_answer)) {
+                    if (newArrayOfQuestions[i] == question.correct_answer) {
+                        styles2[i] = "outline-success";
+                    } else {
+                        styles2[i] = "outline-danger";
+                    }
+                } else {
+                    if (newArrayOfQuestions[i] == question.correct_answer) {
+                        styles2[i] = "success";
+                    } else {
+                        styles2[i] = "danger";
+                    }
+                }
             }
-        }
-        style[props.id] = styles2;
-        console.log(style);
-        console.log(props.buttonVariants);
-        props.setButtonVariants(style);
-    };
-
-    const buttonDisabled = (id) => {
-        //checks if the button is disabled
-        if (styles[id] == "outline-secondary") {
-            return false;
-        } else {
-            return true;
+            style[props.id] = [
+                newArrayOfQuestions[0],
+                styles2[0],
+                newArrayOfQuestions[1],
+                styles2[1],
+                newArrayOfQuestions[2],
+                styles2[2],
+                newArrayOfQuestions[3],
+                styles2[3],
+            ];
+            props.setButtonVariants(style);
         }
     };
 
@@ -52,7 +60,6 @@ const Cards = (props) => {
             return (
                 <>
                     {newArrayOfQuestions.map((item, id) => {
-                        console.log(item);
                         return (
                             <ListGroupItem>
                                 <Button
@@ -63,7 +70,6 @@ const Cards = (props) => {
                                         buttonClicked(e.target.value)
                                     }
                                     value={atob(item)}
-                                    disabled={buttonDisabled(id)}
                                 >
                                     {atob(item)}
                                 </Button>
@@ -73,30 +79,30 @@ const Cards = (props) => {
                 </>
             );
         } else if (atob(question.type) == "boolean") {
-            /*
             return (
                 <>
                     <ListGroupItem>
                         <Button
-                            variant={props.buttonVariants[props.id][0]}
+                            variant={props.buttonVariants[props.id][1]}
                             key={1}
                             block
+                            onClick={(e) => buttonClicked(e.target.value)}
                         >
                             True
                         </Button>
                     </ListGroupItem>
                     <ListGroupItem>
                         <Button
-                            variant={props.buttonVariants[props.id][1]}
+                            variant={props.buttonVariants[props.id][3]}
                             key={2}
                             block
+                            onClick={(e) => buttonClicked(e.target.value)}
                         >
                             False
                         </Button>
                     </ListGroupItem>
                 </>
             );
-            */
         }
     };
     return (
