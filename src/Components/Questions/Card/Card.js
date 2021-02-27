@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import "./Card.css";
 import { Card, ListGroup, ListGroupItem, Button } from "react-bootstrap";
+
+import axios from "axios";
 
 const Cards = (props) => {
     const question = props.question;
@@ -15,6 +18,50 @@ const Cards = (props) => {
         props.buttonVariants[props.id][5],
         props.buttonVariants[props.id][7],
     ];
+
+    const getImage = () => {
+        if (props.buttonVariants[props.id][8] == undefined) {
+            const accessKey = "IxtZhZU6SFDgdL_eH6uOFno0M9TpWxyGJENAmKtfatE";
+            let state = [...props.buttonVariants];
+            const url =
+                "https://api.unsplash.com/search/photos?page=1&query=" +
+                atob(question.question) +
+                "&client_id=" +
+                accessKey;
+            axios
+                .get(url)
+                .then((response) => {
+                    function getRandomInt(max) {
+                        return Math.floor(Math.random() * Math.floor(max));
+                    }
+                    const random = getRandomInt(10);
+                    state[props.id][8] =
+                        response.data.results[random].urls.raw + "&w=750&dpr=1";
+                    props.setButtonVariants(state);
+                })
+                .catch((error) => {
+                    // Error 😨
+                    if (error.response) {
+                        /*
+                         * The request was made and the server responded with a
+                         * status code that falls out of the range of 2xx
+                         */
+                        console.log(error.response.data);
+                    } else if (error.request) {
+                        /*
+                         * The request was made but no response was received, `error.request`
+                         * is an instance of XMLHttpRequest in the browser and an instance
+                         * of http.ClientRequest in Node.js
+                         */
+                        console.log(error.request);
+                    } else {
+                        // Something happened in setting up the request and triggered an Error
+                        console.log("Error", error.message);
+                    }
+                });
+        }
+    };
+
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
@@ -27,17 +74,41 @@ const Cards = (props) => {
             let style = [...props.buttonVariants];
             let styles2 = styles;
             for (let i = 0; i < newArrayOfQuestions.length; i++) {
-                if (clicked == atob(question.correct_answer)) {
-                    if (newArrayOfQuestions[i] == question.correct_answer) {
-                        styles2[i] = "outline-success";
+                if (question.type == "Ym9vbGVhbg==") {
+                    //what happens if the type of the question is true or false
+                    if (clicked == atob(question.correct_answer)) {
+                        if ("VHJ1ZQ==" == question.correct_answer) {
+                            styles2[0] = "outline-success";
+                            styles2[1] = "outline-danger";
+
+                        } else {
+                            styles2[1] = "outline-success";
+                            styles2[0] = "outline-danger";
+                        }
                     } else {
-                        styles2[i] = "outline-danger";
+                        if ("VHJ1ZQ==" == question.correct_answer) {
+                            styles2[0] = "success";
+                            styles2[1] = "danger";
+
+                        } else {
+                            styles2[1] = "success";
+                            styles2[0] = "danger";
+                        }
                     }
                 } else {
-                    if (newArrayOfQuestions[i] == question.correct_answer) {
-                        styles2[i] = "success";
+                    //what happens if the type of the question is multiple choice
+                    if (clicked == atob(question.correct_answer)) {
+                        if (newArrayOfQuestions[i] == question.correct_answer) {
+                            styles2[i] = "outline-success";
+                        } else {
+                            styles2[i] = "outline-danger";
+                        }
                     } else {
-                        styles2[i] = "danger";
+                        if (newArrayOfQuestions[i] == question.correct_answer) {
+                            styles2[i] = "success";
+                        } else {
+                            styles2[i] = "danger";
+                        }
                     }
                 }
             }
@@ -50,6 +121,7 @@ const Cards = (props) => {
                 styles2[2],
                 newArrayOfQuestions[3],
                 styles2[3],
+                props.buttonVariants[props.id][8],
             ];
             props.setButtonVariants(style);
         }
@@ -87,6 +159,7 @@ const Cards = (props) => {
                             key={1}
                             block
                             onClick={(e) => buttonClicked(e.target.value)}
+                            value="True"
                         >
                             True
                         </Button>
@@ -97,6 +170,7 @@ const Cards = (props) => {
                             key={2}
                             block
                             onClick={(e) => buttonClicked(e.target.value)}
+                            value="False"
                         >
                             False
                         </Button>
@@ -105,9 +179,16 @@ const Cards = (props) => {
             );
         }
     };
+    getImage();
     return (
-        <div>
+        <div className="question-card">
             <Card>
+                <Card.Img
+                    variant="top"
+                    src={props.buttonVariants[props.id][8]}
+                    className="card-image"
+                    rounded
+                />
                 <Card.Body>
                     <Card.Title>{atob(question.question)}</Card.Title>
                     <Card.Text>
@@ -117,10 +198,10 @@ const Cards = (props) => {
                             {capitalizeFirstLetter(atob(question.difficulty))}
                         </p>
                     </Card.Text>
+                    <ListGroup className="list-group-flush">
+                        {multipleOrTrue()}
+                    </ListGroup>
                 </Card.Body>
-                <ListGroup className="list-group-flush">
-                    {multipleOrTrue()}
-                </ListGroup>
             </Card>
         </div>
     );

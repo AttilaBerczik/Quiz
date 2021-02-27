@@ -122,6 +122,7 @@ const Questions = ({ match }) => {
                         id={id}
                         buttonVariants={buttonVariants}
                         setButtonVariants={setButtonVariants}
+                        
                     />
                 );
             });
