@@ -17,12 +17,11 @@ const ScoreTable = ({ buttonVariants }) => {
                 }
             }
         }
-        console.log(toReturn);
         return toReturn;
     };
 
     return (
-        <Table striped bordered hover variant="dark">
+        <Table striped bordered hover variant="dark" className="scores">
             <tbody className="score-table">
                 <tr>
                     <td>

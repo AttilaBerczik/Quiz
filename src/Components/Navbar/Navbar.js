@@ -21,6 +21,7 @@ const NavBar = () => {
                 variant="dark"
                 fixed="top"
                 expanded={expanded}
+                className="top-nav"
             >
                 <Container>
                     <Link to="/">

@@ -1,0 +1,24 @@
+/* Color Theme Swatches in Hex */
+.Blue-night-1-hex { color: #0D0620; }
+.Blue-night-2-hex { color: #0C082B; }
+.Blue-night-3-hex { color: #0A0924; }
+.Blue-night-4-hex { color: #2C0036; }
+.Blue-night-5-hex { color: #4A0541; }
+
+/* Color Theme Swatches in RGBA */
+.Blue-night-1-rgba { color: rgba(13, 5, 31, 1); }
+.Blue-night-2-rgba { color: rgba(11, 8, 42, 1); }
+.Blue-night-3-rgba { color: rgba(10, 8, 35, 1); }
+.Blue-night-4-rgba { color: rgba(43, 0, 54, 1); }
+.Blue-night-5-rgba { color: rgba(73, 4, 65, 1); }
+
+/* Color Theme Swatches in HSLA */
+.Blue-night-1-hsla { color: hsla(256, 68, 7, 1); }
+.Blue-night-2-hsla { color: hsla(246, 68, 9, 1); }
+.Blue-night-3-hsla { color: hsla(242, 59, 8, 1); }
+.Blue-night-4-hsla { color: hsla(288, 100, 10, 1); }
+.Blue-night-5-hsla { color: hsla(307, 87, 15, 1); }
+
+html {
+    background-color: #0A0924;
+}

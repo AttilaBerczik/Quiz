@@ -53,7 +53,7 @@ const Quizes = () => {
     };
 
     return (
-        <Container>
+        <Container className="quizes-container">
             <h1>Start a Quiz</h1>
             <Form>
                 <Form.Group controlId="exampleForm.ControlSelect1">

@@ -136,13 +136,12 @@ const Questions = ({ match }) => {
                     <Col className="questions-column " xs="auto">
                         {mapQuestions(questions)}
                     </Col>
-                    <Col>
-                        <div className="position-fixed scoreCounter">
-                            <ScoreTable buttonVariants={buttonVariants}/>
-                        </div>
-                    </Col>
+                    <Col></Col>
                 </Row>
             </Container>
+            <div className="position-fixed scoreCounter">
+                <ScoreTable buttonVariants={buttonVariants} />
+            </div>
         </>
     );
 };

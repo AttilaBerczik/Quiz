@@ -36,7 +36,7 @@ const Cards = (props) => {
                     }
                     const random = getRandomInt(10);
                     state[props.id][8] =
-                        response.data.results[random].urls.raw + "&w=550&dpr=1";
+                        response.data.results[0].urls.raw + "&w=550&dpr=1";
                     props.setButtonVariants(state);
                 })
                 .catch((error) => {
@@ -125,21 +125,44 @@ const Cards = (props) => {
         }
     };
 
+    const checkStyle = () => {
+        console.log();
+        if (props.buttonVariants[props.id][1] == "outline-secondary") {
+            return {
+                backgroundColor: "#4A0541",
+                color: "cornsilk",
+            };
+        } else if (
+            props.buttonVariants[props.id][1] == "outline-success" ||
+            props.buttonVariants[props.id][1] == "outline-danger"
+        ) {
+            return {
+                backgroundColor: "#4A0541",
+                color: "cornsilk",
+            };
+        } else {
+            return {
+                color: "cornsilk",
+            };
+        }
+    };
+
     const multipleOrTrue = () => {
         if (atob(question.type) == "multiple") {
             return (
                 <>
                     {newArrayOfQuestions.map((item, id) => {
                         return (
-                            <ListGroupItem>
+                            <ListGroupItem className="answers">
                                 <Button
-                                    variant={styles[id]}
                                     block
                                     key={id}
                                     onClick={(e) =>
                                         buttonClicked(e.target.value)
                                     }
                                     value={atob(item)}
+                                    style={checkStyle()}
+                                    variant={styles[id]}
                                 >
                                     {atob(item)}
                                 </Button>
@@ -151,24 +174,26 @@ const Cards = (props) => {
         } else if (atob(question.type) == "boolean") {
             return (
                 <>
-                    <ListGroupItem>
+                    <ListGroupItem className="answers">
                         <Button
-                            variant={props.buttonVariants[props.id][1]}
                             key={1}
                             block
                             onClick={(e) => buttonClicked(e.target.value)}
                             value="True"
+                            style={checkStyle()}
+                            variant={props.buttonVariants[props.id][1]}
                         >
                             True
                         </Button>
                     </ListGroupItem>
-                    <ListGroupItem>
+                    <ListGroupItem className="answers">
                         <Button
-                            variant={props.buttonVariants[props.id][3]}
                             key={2}
                             block
                             onClick={(e) => buttonClicked(e.target.value)}
                             value="False"
+                            style={checkStyle()}
+                            variant={props.buttonVariants[props.id][3]}
                         >
                             False
                         </Button>
@@ -179,12 +204,11 @@ const Cards = (props) => {
     };
     getImage();
     return (
-        <div className="question-card">
-            <Card>
+        <div className="question-card" >
+            <Card className="inner-card">
                 <Card.Img
                     variant="top"
                     src={props.buttonVariants[props.id][8]}
-                    className="card-image"
                     rounded
                 />
                 <Card.Body>
@@ -196,7 +220,7 @@ const Cards = (props) => {
                             {capitalizeFirstLetter(atob(question.difficulty))}
                         </p>
                     </Card.Text>
-                    <ListGroup className="list-group-flush">
+                    <ListGroup className="list-group-flush answers">
                         {multipleOrTrue()}
                     </ListGroup>
                 </Card.Body>
