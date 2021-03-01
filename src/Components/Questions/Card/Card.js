@@ -36,7 +36,7 @@ const Cards = (props) => {
                     }
                     const random = getRandomInt(10);
                     state[props.id][8] =
-                        response.data.results[random].urls.raw + "&w=750&dpr=1";
+                        response.data.results[random].urls.raw + "&w=550&dpr=1";
                     props.setButtonVariants(state);
                 })
                 .catch((error) => {
@@ -80,7 +80,6 @@ const Cards = (props) => {
                         if ("VHJ1ZQ==" == question.correct_answer) {
                             styles2[0] = "outline-success";
                             styles2[1] = "outline-danger";
-
                         } else {
                             styles2[1] = "outline-success";
                             styles2[0] = "outline-danger";
@@ -89,7 +88,6 @@ const Cards = (props) => {
                         if ("VHJ1ZQ==" == question.correct_answer) {
                             styles2[0] = "success";
                             styles2[1] = "danger";
-
                         } else {
                             styles2[1] = "success";
                             styles2[0] = "danger";

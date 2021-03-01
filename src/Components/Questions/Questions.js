@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Card from "./Card/Card";
+import ScoreTable from "./ScoreTable/ScoreTable";
 import { Container, Row, Col } from "react-bootstrap";
 import "./Questions.css";
 
@@ -122,22 +123,27 @@ const Questions = ({ match }) => {
                         id={id}
                         buttonVariants={buttonVariants}
                         setButtonVariants={setButtonVariants}
-                        
                     />
                 );
             });
         }
     };
     return (
-        <Container>
-            <Row className="questions-column">
-                <Col />
-                <Col className="questions-column " xs="auto">
-                    {mapQuestions(questions)}
-                </Col>
-                <Col />
-            </Row>
-        </Container>
+        <>
+            <Container>
+                <Row className="questions-column">
+                    <Col />
+                    <Col className="questions-column " xs="auto">
+                        {mapQuestions(questions)}
+                    </Col>
+                    <Col>
+                        <div className="position-fixed scoreCounter">
+                            <ScoreTable buttonVariants={buttonVariants}/>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
+        </>
     );
 };
 
