@@ -6,6 +6,7 @@ import axios from "axios";
 
 const Cards = (props) => {
     const question = props.question;
+    console.log(question);
     const newArrayOfQuestions = [
         props.buttonVariants[props.id][0],
         props.buttonVariants[props.id][2],
@@ -204,7 +205,7 @@ const Cards = (props) => {
     };
     getImage();
     return (
-        <div className="question-card" >
+        <div className="question-card">
             <Card className="inner-card">
                 <Card.Img
                     variant="top"
