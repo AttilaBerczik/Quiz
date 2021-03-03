@@ -18,6 +18,8 @@ const questionSchema = new Schema(
         incorrect_answer_3: { type: String, required: false },
         question: { type: String, required: true },
         type: { type: String, required: true },
+        difficulty: { type: String, required: true },
+        image: { type: String, required: false },
     },
     {
         timestamps: true,
