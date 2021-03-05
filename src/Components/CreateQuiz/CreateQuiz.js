@@ -14,6 +14,12 @@ const CreateQuiz = () => {
     const [correctAnswer, setCorrectAnswer] = useState("");
     const [wrongAnswer, setWrongAnswer] = useState([]);
     const [userName, setUserName] = useState("");
+    const [errors, setErrors] = useState({
+        question: "",
+        correctAnswer: "",
+        wrongAnswer: ["", "", ""],
+        userName: "",
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,6 +35,46 @@ const CreateQuiz = () => {
             return category.map((item) => (
                 <option key={item.id}>{item.name}</option>
             ));
+        }
+    };
+
+    const handleChange = (e) => {
+        //this is for handling change for all the components that we want to have form validation on, these are the question, correctAnswer, wrongAnswer and userName
+        e.preventDefault();
+        const { name, value } = e.target;
+        let formErrors = { ...errors };
+
+        switch (name) {
+            case "question":
+                if (value.length < 5 || value.includes(" ") == false) {
+                    console.log("hi");
+                    formErrors.question =
+                        "minimum 5 characaters and a space are required";
+                } else {
+                    formErrors.question =
+                        value.length > 151
+                            ? "maximum 150 characaters are allowed"
+                            : "";
+                }
+                setQuestion(value);
+                setErrors(formErrors);
+                break;
+            case "correctAnswer":
+                formErrors.correctAnswer =
+                    value.length > 120
+                        ? "maximum 119 characaters are allowed"
+                        : "";
+                setErrors(formErrors);
+                setCorrectAnswer(value);
+                break;
+            case "userName":
+                formErrors.userName =
+                    value.length < 3 ? "minimum 3 characaters required" : "";
+                setErrors(formErrors);
+                break;
+            default:
+                setErrors(formErrors);
+                break;
         }
     };
 
@@ -48,8 +94,12 @@ const CreateQuiz = () => {
                             type="text"
                             placeholder="Correct answer"
                             value={correctAnswer}
-                            onChange={(e) => setCorrectAnswer(e.target.value)}
+                            onChange={handleChange}
                             formNoValidate
+                            name="correctAnswer"
+                            className={
+                                errors.correctAnswer.length > 0 ? "error" : null
+                            }
                         />
                     </Form.Group>
                     <Form.Group controlId="exampleForm.ControlSelect">
@@ -58,8 +108,14 @@ const CreateQuiz = () => {
                             type="text"
                             placeholder="Wrong answer 1"
                             value={wrongAnswer[0]}
-                            onChange={(e) => changeState(0, e.target.value)}
+                            onChange={handleChange}
                             formNoValidate
+                            name="wrongAnswer-1"
+                            className={
+                                errors.wrongAnswer[0].length > 0
+                                    ? "error"
+                                    : null
+                            }
                         />
                     </Form.Group>
                     <Form.Group controlId="exampleForm.ControlSelect">
@@ -67,8 +123,14 @@ const CreateQuiz = () => {
                             type="text"
                             placeholder="Wrong answer 2 (optional)"
                             value={wrongAnswer[1]}
-                            onChange={(e) => changeState(1, e.target.value)}
+                            onChange={handleChange}
                             formNoValidate
+                            name="wrongAnswer-2"
+                            className={
+                                errors.wrongAnswer[1].length > 0
+                                    ? "error"
+                                    : null
+                            }
                         />
                     </Form.Group>
                     <Form.Group controlId="exampleForm.ControlSelect">
@@ -76,8 +138,14 @@ const CreateQuiz = () => {
                             type="text"
                             placeholder="Wrong answer 3 (optional)"
                             value={wrongAnswer[2]}
-                            onChange={(e) => changeState(2, e.target.value)}
+                            onChange={handleChange}
                             formNoValidate
+                            name="wrongAnswer-3"
+                            className={
+                                errors.wrongAnswer[2].length > 0
+                                    ? "error"
+                                    : null
+                            }
                         />
                     </Form.Group>
                 </>
@@ -166,7 +234,7 @@ const CreateQuiz = () => {
         //when the user submits the question first we check if all the necessary stuff are filled in
         for (let i = 0; i < 1; i++) {
             //created a loop so I can easily break out and I don't have to nest everything
-            console.log(question)
+            console.log(question);
         }
     };
 
@@ -180,8 +248,10 @@ const CreateQuiz = () => {
                         type="text"
                         placeholder="Your question"
                         value={question}
-                        onChange={(e) => setQuestion(e.target.value)}
+                        onChange={handleChange}
                         formNoValidate
+                        name="question"
+                        className={errors.question.length > 0 ? "error" : null}
                     />
                 </Form.Group>
                 <Form.Group controlId="exampleForm.ControlSelect3">
@@ -227,8 +297,10 @@ const CreateQuiz = () => {
                         type="text"
                         placeholder="Your name"
                         value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
+                        onChange={handleChange}
                         formNoValidate
+                        name="userName"
+                        className={errors.userName.length > 0 ? "error" : null}
                     />
                 </Form.Group>
                 <Row className="justify-content-md-center">
