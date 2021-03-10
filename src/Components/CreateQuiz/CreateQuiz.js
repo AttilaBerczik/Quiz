@@ -51,21 +51,17 @@ const userNameValidation = (fieldName, fieldValue) => {
 };
 const validate = {
     question: (question) => questionValidation("Question", question),
-    correctAnswer: (answer) =>
-        correctAnswerValidation("Correct Answer", answer),
-    wrongAnswer_1: (answer) =>
-        correctAnswerValidation("Wrong Answer 1", answer),
-    wrongAnswer_2: (answer) => wrongAnswerValidation("Wrong Answer 2", answer),
-    wrongAnswer_3: (answer) => wrongAnswerValidation("Wrong Answer 3", answer),
+    correctAnswer: (answer) => correctAnswerValidation("Correct Answer", answer),
+    wrongAnswer1: (answer) => correctAnswerValidation("Wrong Answer 1", answer),
+    wrongAnswer2: (answer) => wrongAnswerValidation("Wrong Answer 2", answer),
+    wrongAnswer3: (answer) => wrongAnswerValidation("Wrong Answer 3", answer),
     userName: (name) => userNameValidation("User Name", name),
 };
 
 const CreateQuiz = () => {
     const [categoryData, setCategoryData] = useState();
     const [question, setQuestion] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState(
-        "General Knowledge"
-    );
+    const [selectedCategory, setSelectedCategory] = useState("General Knowledge");
     const [selectedDifficulty, setSelectedDifficulty] = useState("Easy");
     const [selectedType, setSelectedType] = useState("Multiple Choice");
     const [correctAnswer, setCorrectAnswer] = useState("");
@@ -74,7 +70,9 @@ const CreateQuiz = () => {
     const [errors, setErrors] = useState({
         question: "",
         correctAnswer: "",
-        wrongAnswer: ["", "", ""],
+        wrongAnswer1: "",
+        wrongAnswer2: "",
+        wrongAnswer3: "",
         userName: "",
     });
     const [touched, setTouched] = useState({});
@@ -90,9 +88,7 @@ const CreateQuiz = () => {
 
     const mapCategory = (category) => {
         if (category != undefined) {
-            return category.map((item) => (
-                <option key={item.id}>{item.name}</option>
-            ));
+            return category.map((item) => <option key={item.id}>{item.name}</option>);
         }
     };
 
@@ -100,31 +96,28 @@ const CreateQuiz = () => {
         //this is for handling change for all the components that we want to have form validation on, these are the question, correctAnswer, wrongAnswer and userName
         e.preventDefault();
         const { name, value } = e.target;
+        let wrongAnswerCopy = [...wrongAnswer];
         switch (name) {
             case "question":
-                /*
-                if (value.length < 5 || value.includes(" ") == false) {
-                    console.log("hi");
-                    formErrors.question =
-                        "minimum 5 characaters and a space are required";
-                } else {
-                    formErrors.question =
-                        value.length > 151
-                            ? "maximum 150 characaters are allowed"
-                            : "";
-                }*/
                 setQuestion(value);
                 break;
             case "correctAnswer":
-                /* formErrors.correctAnswer =
-                   value.length > 120
-                        ? "maximum 119 characaters are allowed"
-                        : "";*/
                 setCorrectAnswer(value);
                 break;
             case "userName":
-                /*formErrors.userName =
-                    value.length < 3 ? "minimum 3 characaters required" : "";*/
+                setUserName(value);
+                break;
+            case "wrongAnswer1":
+                wrongAnswerCopy[0] = value;
+                setWrongAnswer(wrongAnswerCopy);
+                break;
+            case "wrongAnswer2":
+                wrongAnswerCopy[1] = value;
+                setWrongAnswer(wrongAnswerCopy);
+                break;
+            case "wrongAnswer3":
+                wrongAnswerCopy[2] = value;
+                setWrongAnswer(wrongAnswerCopy);
                 break;
             default:
                 break;
@@ -133,6 +126,20 @@ const CreateQuiz = () => {
             ...touched,
             [name]: true,
         });
+        //if the error has been resolved or it's different we remove it
+        const { [name]: removedError, ...rest } = errors;
+        const error = validate[name](value);
+        if (error == null) {
+            setErrors({
+                ...rest,
+                ...(error && { [name]: touched[name] && error }),
+            });
+        } else if (errors[name] != null && errors[name] != error) {
+            setErrors({
+                ...rest,
+                ...(error && { [name]: touched[name] && error }),
+            });
+        }
     };
 
     const handleBlur = (evt) => {
@@ -140,50 +147,63 @@ const CreateQuiz = () => {
 
         // remove whatever error was there previously
         const { [name]: removedError, ...rest } = errors;
-
         // check for a new error
         const error = validate[name](value);
-
-        // // validate the field if the value has been touched
         setErrors({
             ...rest,
             ...(error && { [name]: touched[name] && error }),
         });
     };
 
-    // form submit handler
     const handleSubmit = (evt) => {
+        // form submit handler
         evt.preventDefault();
-        console.log(evt);
-        /*
-        // validate the form
-        const formValidation = Object.keys(values).reduce(
-            (acc, key) => {
-                const newError = validate[key](values[key]);
-                const newTouched = { [key]: true };
-                return {
-                    errors: {
-                        ...acc.errors,
-                        ...(newError && { [key]: newError }),
-                    },
-                    touched: {
-                        ...acc.touched,
-                        ...newTouched,
-                    },
-                };
-            },
-            {
-                errors: { ...errors },
-                touched: { ...touched },
-            }
-        );
-        setErrors(formValidation.errors);
-        setTouched(formValidation.touched);
+        // make all the errors visible
+        let checkErrors = {};
+        const keys = ["question", "correctAnswer", "userName", "wrongAnswer1", "wrongAnswer2", "wrongAnswer3"];
+        for (let i = 0; i < keys.length; i++) {
+            const name = keys[i];
+            const getValue = (n) => {
+                switch (n) {
+                    case "question":
+                        return question;
+                        break;
+                    case "correctAnswer":
+                        return correctAnswer;
+                        break;
+                    case "userName":
+                        return userName;
+                        break;
+                    case "wrongAnswer1":
+                        return wrongAnswer[0];
+                        break;
+                    case "wrongAnswer2":
+                        return wrongAnswer[1];
+                        break;
+                    case "wrongAnswer3":
+                        return wrongAnswer[2];
+                        break;
+                    default:
+                        break;
+                }
+            };
+            const value = getValue(name);
+            console.log(name);
+            console.log(value);
+        }
+        setErrors(checkErrors);
+        setTouched({
+            question: true,
+            correctAnswer: true,
+            wrongAnswer1: true,
+            wrongAnswer2: true,
+            wrongAnswer3: true,
+            userName: true,
+        });
 
-        if (
+        /*if (
             !Object.values(formValidation.errors).length && // errors object is empty
-            Object.values(formValidation.touched).length ===
-                Object.values(values).length && // all fields were touched
+            Object.values(formValidation.touched).length === Object.values(values).length && // all fields were touched
             Object.values(formValidation.touched).every((t) => t === true) // every touched field is true
         ) {
             alert(JSON.stringify(values, null, 2));
@@ -207,12 +227,11 @@ const CreateQuiz = () => {
                                     required
                                     formNoValidate
                                     name="correctAnswer"
-                                    className={
-                                        errors.correctAnswer.length > 0
-                                            ? "error"
-                                            : null
-                                    }
+                                    className={touched.correctAnswer && errors.correctAnswer ? "error" : null}
                                 />
+                                {touched.correctAnswer && errors.correctAnswer ? (
+                                    <p className="errorMessage">{errors.correctAnswer}</p>
+                                ) : null}
                             </Form.Group>
                         </Col>
                         <Col>
@@ -226,13 +245,10 @@ const CreateQuiz = () => {
                                     onBlur={handleBlur}
                                     required
                                     formNoValidate
-                                    name="wrongAnswer_1"
-                                    className={
-                                        errors.wrongAnswer[0].length > 0
-                                            ? "error"
-                                            : null
-                                    }
+                                    name="wrongAnswer1"
+                                    className={touched.wrongAnswer1 && errors.wrongAnswer1 ? "error" : null}
                                 />
+                                {touched.wrongAnswer1 && errors.wrongAnswer1 ? <p className="errorMessage">{errors.wrongAnswer1}</p> : null}
                             </Form.Group>
                         </Col>
                     </Row>
@@ -246,13 +262,10 @@ const CreateQuiz = () => {
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     formNoValidate
-                                    name="wrongAnswer_2"
-                                    className={
-                                        errors.wrongAnswer[1].length > 0
-                                            ? "error"
-                                            : null
-                                    }
+                                    name="wrongAnswer2"
+                                    className={touched.wrongAnswer2 && errors.wrongAnswer2 ? "error" : null}
                                 />
+                                {touched.wrongAnswer2 && errors.wrongAnswer2 ? <p className="errorMessage">{errors.wrongAnswer2}</p> : null}
                             </Form.Group>
                         </Col>
                         <Col>
@@ -264,13 +277,10 @@ const CreateQuiz = () => {
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     formNoValidate
-                                    name="wrongAnswer_3"
-                                    className={
-                                        errors.wrongAnswer[2].length > 0
-                                            ? "error"
-                                            : null
-                                    }
+                                    name="wrongAnswer3"
+                                    className={touched.wrongAnswer3 && errors.wrongAnswer3 ? "error" : null}
                                 />
+                                {touched.wrongAnswer3 && errors.wrongAnswer3 ? <p className="errorMessage">{errors.wrongAnswer3}</p> : null}
                             </Form.Group>
                         </Col>
                     </Row>
@@ -284,10 +294,7 @@ const CreateQuiz = () => {
                     setWrongAnswer([goalAnswer]);
                     if (goalAnswer == "True" && correctAnswer == "True") {
                         setCorrectAnswer("False");
-                    } else if (
-                        goalAnswer == "False" &&
-                        correctAnswer == "False"
-                    ) {
+                    } else if (goalAnswer == "False" && correctAnswer == "False") {
                         setCorrectAnswer("True");
                     }
                 }
@@ -300,10 +307,7 @@ const CreateQuiz = () => {
                     setCorrectAnswer(goalAnswer);
                     if (goalAnswer == "True" && wrongAnswer[0] == "True") {
                         setWrongAnswer(["False"]);
-                    } else if (
-                        goalAnswer == "False" &&
-                        wrongAnswer[0] == "False"
-                    ) {
+                    } else if (goalAnswer == "False" && wrongAnswer[0] == "False") {
                         setWrongAnswer(["True"]);
                     }
                 }
@@ -318,9 +322,7 @@ const CreateQuiz = () => {
                                 <Form.Control
                                     as="select"
                                     value={correctAnswer}
-                                    onChange={(e) =>
-                                        calculateCorrectAnswer(e.target.value)
-                                    }
+                                    onChange={(e) => calculateCorrectAnswer(e.target.value)}
                                     formNoValidate
                                 >
                                     <option>True</option>
@@ -334,9 +336,7 @@ const CreateQuiz = () => {
                                 <Form.Control
                                     as="select"
                                     value={wrongAnswer[0]}
-                                    onChange={(e) =>
-                                        calculateWrongAnswer(e.target.value)
-                                    }
+                                    onChange={(e) => calculateWrongAnswer(e.target.value)}
                                     formNoValidate
                                 >
                                     <option>False</option>
@@ -377,20 +377,13 @@ const CreateQuiz = () => {
                         required
                         formNoValidate
                         name="question"
-                        className={errors.question.length > 0 ? "error" : null}
+                        className={touched.question && errors.question ? "error" : null}
                     />
-                    {errors.question.length > 0 && (
-                        <span className="errorMessage">{errors.question}</span>
-                    )}
+                    {touched.question && errors.question ? <p className="errorMessage">{errors.question}</p> : null}
                 </Form.Group>
                 <Form.Group controlId="exampleForm.ControlSelect3">
                     <Form.Label>Type</Form.Label>
-                    <Form.Control
-                        as="select"
-                        value={selectedType}
-                        onChange={(e) => changeType(e.target.value)}
-                        formNoValidate
-                    >
+                    <Form.Control as="select" value={selectedType} onChange={(e) => changeType(e.target.value)} formNoValidate>
                         <option>Multiple Choice</option>
                         <option>True / False</option>
                     </Form.Control>
@@ -402,9 +395,7 @@ const CreateQuiz = () => {
                             <Form.Label>Category</Form.Label>
                             <Form.Control
                                 as="select"
-                                onChange={(e) =>
-                                    setSelectedCategory(e.target.value)
-                                }
+                                onChange={(e) => setSelectedCategory(e.target.value)}
                                 value={selectedCategory}
                                 formNoValidate
                             >
@@ -417,9 +408,7 @@ const CreateQuiz = () => {
                             <Form.Label>Difficulty</Form.Label>
                             <Form.Control
                                 as="select"
-                                onChange={(e) =>
-                                    setSelectedDifficulty(e.target.value)
-                                }
+                                onChange={(e) => setSelectedDifficulty(e.target.value)}
                                 value={selectedDifficulty}
                                 formNoValidate
                             >
@@ -441,18 +430,14 @@ const CreateQuiz = () => {
                         required
                         formNoValidate
                         name="userName"
-                        className={errors.userName.length > 0 ? "error" : null}
+                        className={touched.userName && errors.userName ? "error" : null}
                     />
+                    {touched.userName && errors.userName ? <p className="errorMessage">{errors.userName}</p> : null}
                 </Form.Group>
                 <Row className="justify-content-md-center">
                     <Col md="auto">
                         <div className="mb-2">
-                            <Button
-                                variant="primary"
-                                size="lg"
-                                formNoValidate
-                                onClick={handleSubmit}
-                            >
+                            <Button variant="primary" size="lg" formNoValidate onClick={handleSubmit}>
                                 Submit your question
                             </Button>
                         </div>

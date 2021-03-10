@@ -14,11 +14,7 @@ const App = () => {
                 <Route path="/" exact component={Home} />
                 <Route path="/quizes" exact component={Quizes} />
                 <Route path="/create" exact component={CreateQuiz} />
-                <Route
-                    exact
-                    path="/q/:categoryID/:difficulty/:type/:numberOfQuestions"
-                    component={Questions}
-                />
+                <Route exact path="/q/:categoryID/:difficulty/:type/:numberOfQuestions" component={Questions} />
             </div>
         </BrowserRouter>
     );
