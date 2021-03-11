@@ -21,7 +21,9 @@ const questionValidation = (fieldName, fieldValue) => {
 };
 const correctAnswerValidation = (fieldName, fieldValue) => {
     //correctAnswer and wrongAnswer 1 validation
-    if (fieldValue.trim() === "") {
+    if (fieldValue == undefined) {
+        return `${fieldName} is required`;
+    } else if (fieldValue.trim() === "") {
         return `${fieldName} is required`;
     }
     if (fieldValue.trim().length > 120) {
@@ -31,7 +33,9 @@ const correctAnswerValidation = (fieldName, fieldValue) => {
 };
 const wrongAnswerValidation = (fieldName, fieldValue) => {
     //wrongAnswer 2, 3 validation
-    if (fieldValue.trim().length > 120) {
+    if (fieldValue == undefined) {
+        return null;
+    } else if (fieldValue.trim().length > 120) {
         return `${fieldName} needs to be maximum 120 characters long`;
     }
     return null;
@@ -159,7 +163,7 @@ const CreateQuiz = () => {
         // form submit handler
         evt.preventDefault();
         // make all the errors visible
-        let checkErrors = {};
+        let checkErrors = { ...errors };
         const keys = ["question", "correctAnswer", "userName", "wrongAnswer1", "wrongAnswer2", "wrongAnswer3"];
         for (let i = 0; i < keys.length; i++) {
             const name = keys[i];
@@ -187,9 +191,12 @@ const CreateQuiz = () => {
                         break;
                 }
             };
-            const value = getValue(name);
-            console.log(name);
-            console.log(value);
+            const { [name]: removedError, ...rest } = checkErrors;
+            const error = validate[name](getValue(name));
+            checkErrors = {
+                ...rest,
+                ...(error && { [name]: true && error }),
+            };
         }
         setErrors(checkErrors);
         setTouched({
@@ -200,14 +207,11 @@ const CreateQuiz = () => {
             wrongAnswer3: true,
             userName: true,
         });
-
-        /*if (
-            !Object.values(formValidation.errors).length && // errors object is empty
-            Object.values(formValidation.touched).length === Object.values(values).length && // all fields were touched
-            Object.values(formValidation.touched).every((t) => t === true) // every touched field is true
-        ) {
-            alert(JSON.stringify(values, null, 2));
-        }*/
+        const values = Object.values(errors);
+        if (!values.length) {
+            // errors object is empty
+            alert("hello");
+        }
     };
 
     const displayAnswers = () => {
