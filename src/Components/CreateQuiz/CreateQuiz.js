@@ -171,11 +171,10 @@ const CreateQuiz = () => {
         evt.preventDefault();
 
         //if the user didn't put the wrong answers into the right cells, we put it there for them
-        if (selectedDifficulty == "Multiple Choice") {
+        if (selectedType == "Multiple Choice") {
             if (wrongAnswer[0].trim().length == 0 || wrongAnswer[1].trim().length == 0) {
                 let wrongAnswerCopy = [...wrongAnswer];
                 if (wrongAnswer[2].trim().length) {
-                    console.log("here")
                     if (wrongAnswer[1].trim().length) {
                         wrongAnswerCopy[0] = wrongAnswer[2].trim();
                         wrongAnswerCopy[2] = "";
@@ -187,7 +186,6 @@ const CreateQuiz = () => {
                         wrongAnswerCopy[2] = "";
                     }
                 } else if (wrongAnswer[1].trim().length) {
-                    console.log("here")
                     if (wrongAnswer[0].trim().length == 0) {
                         wrongAnswerCopy[0] = wrongAnswer[1].trim();
                         wrongAnswerCopy[1] = "";
@@ -245,7 +243,15 @@ const CreateQuiz = () => {
 
         const values = Object.values(errors);
         if (!values.length) {
+            let wrongAnswerCopy = [...wrongAnswer];
             // errors object is empty
+            if (!wrongAnswer[1].length) {
+                //remove possible empty spaces
+                wrongAnswerCopy = [wrongAnswer[0]];
+            } else if (!wrongAnswer[2].length) {
+                wrongAnswerCopy = [wrongAnswer[0], wrongAnswer[1]];
+            }
+
             alert(
                 JSON.stringify({
                     result: {
@@ -254,7 +260,7 @@ const CreateQuiz = () => {
                         selectedDifficulty: selectedDifficulty,
                         selectedType: selectedType,
                         correctAnswer: correctAnswer,
-                        wrongAnswer: wrongAnswer,
+                        wrongAnswer: wrongAnswerCopy,
                         userName: userName,
                     },
                 })
@@ -418,7 +424,7 @@ const CreateQuiz = () => {
         setSelectedType(target);
         if (target == "Multiple Choice") {
             setCorrectAnswer("");
-            setWrongAnswer([]);
+            setWrongAnswer(["", "", ""]);
         } else if (target == "True / False") {
             setCorrectAnswer("True");
             setWrongAnswer(["False"]);
