@@ -51,6 +51,9 @@ const userNameValidation = (fieldName, fieldValue) => {
     if (fieldValue.trim().length < 4) {
         return `${fieldName} needs to be at least three characters`;
     }
+    if (fieldValue.trim().includes(" ")) {
+        return `${fieldName} can't include a space`;
+    }
     return null;
 };
 const validate = {
@@ -69,7 +72,7 @@ const CreateQuiz = () => {
     const [selectedDifficulty, setSelectedDifficulty] = useState("Easy");
     const [selectedType, setSelectedType] = useState("Multiple Choice");
     const [correctAnswer, setCorrectAnswer] = useState("");
-    const [wrongAnswer, setWrongAnswer] = useState([]);
+    const [wrongAnswer, setWrongAnswer] = useState(["", "", ""]);
     const [userName, setUserName] = useState("");
     const [errors, setErrors] = useState({
         question: "",
@@ -103,24 +106,24 @@ const CreateQuiz = () => {
         let wrongAnswerCopy = [...wrongAnswer];
         switch (name) {
             case "question":
-                setQuestion(value);
+                setQuestion(value.trim());
                 break;
             case "correctAnswer":
-                setCorrectAnswer(value);
+                setCorrectAnswer(value.trim());
                 break;
             case "userName":
-                setUserName(value);
+                setUserName(value.trim());
                 break;
             case "wrongAnswer1":
-                wrongAnswerCopy[0] = value;
+                wrongAnswerCopy[0] = value.trim();
                 setWrongAnswer(wrongAnswerCopy);
                 break;
             case "wrongAnswer2":
-                wrongAnswerCopy[1] = value;
+                wrongAnswerCopy[1] = value.trim();
                 setWrongAnswer(wrongAnswerCopy);
                 break;
             case "wrongAnswer3":
-                wrongAnswerCopy[2] = value;
+                wrongAnswerCopy[2] = value.trim();
                 setWrongAnswer(wrongAnswerCopy);
                 break;
             default:
@@ -153,15 +156,47 @@ const CreateQuiz = () => {
         const { [name]: removedError, ...rest } = errors;
         // check for a new error
         const error = validate[name](value);
-        setErrors({
+        const newError = {
             ...rest,
             ...(error && { [name]: touched[name] && error }),
-        });
+        };
+        if (JSON.stringify(newError) !== JSON.stringify(errors)) {
+            //compare if the old and the new errors are equal
+            setErrors(newError);
+        }
     };
 
     const handleSubmit = (evt) => {
         // form submit handler
         evt.preventDefault();
+
+        //if the user didn't put the wrong answers into the right cells, we put it there for them
+        if (selectedDifficulty == "Multiple Choice") {
+            if (wrongAnswer[0].trim().length == 0 || wrongAnswer[1].trim().length == 0) {
+                let wrongAnswerCopy = [...wrongAnswer];
+                if (wrongAnswer[2].trim().length) {
+                    console.log("here")
+                    if (wrongAnswer[1].trim().length) {
+                        wrongAnswerCopy[0] = wrongAnswer[2].trim();
+                        wrongAnswerCopy[2] = "";
+                    } else if (wrongAnswer[0].trim().length) {
+                        wrongAnswerCopy[1] = wrongAnswer[2].trim();
+                        wrongAnswerCopy[2] = "";
+                    } else if (wrongAnswer[0].trim().length == 0 && wrongAnswer[1].trim().length == 0) {
+                        wrongAnswerCopy[0] = wrongAnswer[2].trim();
+                        wrongAnswerCopy[2] = "";
+                    }
+                } else if (wrongAnswer[1].trim().length) {
+                    console.log("here")
+                    if (wrongAnswer[0].trim().length == 0) {
+                        wrongAnswerCopy[0] = wrongAnswer[1].trim();
+                        wrongAnswerCopy[1] = "";
+                    }
+                }
+                setWrongAnswer(wrongAnswerCopy);
+            }
+        }
+
         // make all the errors visible
         let checkErrors = { ...errors };
         const keys = ["question", "correctAnswer", "userName", "wrongAnswer1", "wrongAnswer2", "wrongAnswer3"];
@@ -207,15 +242,39 @@ const CreateQuiz = () => {
             wrongAnswer3: true,
             userName: true,
         });
+
         const values = Object.values(errors);
         if (!values.length) {
             // errors object is empty
-            alert("hello");
+            alert(
+                JSON.stringify({
+                    result: {
+                        question: question,
+                        selectedCategory: selectedCategory,
+                        selectedDifficulty: selectedDifficulty,
+                        selectedType: selectedType,
+                        correctAnswer: correctAnswer,
+                        wrongAnswer: wrongAnswer,
+                        userName: userName,
+                    },
+                })
+            );
         }
     };
 
     const displayAnswers = () => {
         if (selectedType == "Multiple Choice") {
+            for (let i = 0; i < wrongAnswer.length; i++) {
+                //because of a past error we check whether there are any errors
+                const wrongAnswers = ["wrongAnswer1", "wrongAnswer2", "wrongAnswer3"];
+                const evt = {
+                    target: {
+                        name: wrongAnswers[i],
+                        value: wrongAnswer[i],
+                    },
+                };
+                handleBlur(evt);
+            }
             return (
                 <>
                     <Row>
