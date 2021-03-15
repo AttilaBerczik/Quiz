@@ -504,12 +504,10 @@ const CreateQuiz = () => {
                     {touched.userName && errors.userName ? <p className="errorMessage">{errors.userName}</p> : null}
                 </Form.Group>
                 <Row className="justify-content-md-center">
-                    <Col md="auto">
-                        <div className="mb-2">
-                            <Button variant="primary" size="lg" formNoValidate onClick={handleSubmit}>
-                                Submit your question
-                            </Button>
-                        </div>
+                    <Col md="auto" className="mb-2">
+                        <Button variant="primary" size="lg" formNoValidate onClick={handleSubmit}>
+                            Submit your question
+                        </Button>
                     </Col>
                 </Row>
             </Form>

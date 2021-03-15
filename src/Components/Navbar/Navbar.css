@@ -2,6 +2,31 @@
     margin-top: 0.7rem;
     vertical-align: middle;
 }
-.top-nav{
-    background-color: #0D0620!important;
+.top-nav {
+    background-color: #0d0620 !important;
+}
+.avatar {
+    color: indigo;
+}
+.userName {
+    display: flex;
+    align-items: center;
+}
+.avatar-circle {
+    width: 3rem;
+    height: 3rem;
+    background-color: green;
+    text-align: center;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+}
+.initials {
+    position: relative;
+    top: 17%; /* 25% of parent */
+    font-size: 200%; /* 50% of parent */
+    line-height: 100%; /* 50% of parent */
+    color: #fff;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
 }
